@@ -1,26 +1,185 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Выбор даты и времени</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <!--
-      ЗАДАНИЕ
-      ========
-      Сверстать страницу выбора даты и времени по своему макету.
 
-      Пока это только вёрстка. Никакого JavaScript — ни кликов,
-      ни переходов, ни выбора дня. Всё статично.
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Выбор даты и времени</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
-      Стили пишите в styles.css. Разметку — здесь.
-    -->
-
-    <div class="page">
-      <!-- Начните отсюда. Разметьте шапку, основную область
-           с календарём и слотами, подвал. -->
+<body>
+  <header class="header">
+    <div class="header__logo">LUMIERE</div>
+    <div class="header__nav">
+      <div class="header__nav-list">
+        <a href="#" class="header__nav-item">Услуги</a>
+        <a href="#" class="header__nav-item">Галерея</a>
+        <a href="#" class="header__nav-item">Команда</a>
+        <a href="#" class="header__nav-item">Отзывы</a>
+        <a href="#" class="header__nav-item">Контакты</a>
+      </div>
     </div>
-  </body>
+  </header>
+
+
+  <main class="booking">
+    <div class="stepper">
+      <div class="stepper__step stepper__step_complete">
+        <div class="stepper__circle">1</div>
+        <div class="stepper__label">Специалист</div>
+      </div>
+      <div class="stepper__step stepper__step_complete">
+        <div class="stepper__circle">2</div>
+        <div class="stepper__label">Услуга</div>
+      </div>
+      <div class="stepper__step stepper__step_active">
+        <div class="stepper__circle">3</div>
+        <div class="stepper__label">Дата и время</div>
+      </div>
+      <div class="stepper__step stepper__step_pending">
+        <div class="stepper__circle">4</div>
+        <div class="stepper__label">Контактные данные</div>
+      </div>
+      <div class="stepper__step stepper__step_pending">
+        <div class="stepper__circle">5</div>
+        <div class="stepper__label">Проверка записи</div>
+      </div>
+    </div>
+
+    <section class="form">
+      <div class="form-header">
+        <a href="#" class="form-header__back-link">
+          <span class="form-header__back-icon">←</span> Назад
+        </a>
+
+        <div class="form-header__content">
+          <h1 class="form-header__title">Дата и время</h1>
+          <p class="form-header__subtitle">Найдите удобное окошко в расписании мастера.</p>
+        </div>
+      </div>
+
+      <div class="form-booking">
+        <div class="calendar">
+          <div class="calendar__header">
+            <h2 class="calendar__title">Октябрь 2026</h2>
+            <div class="calendar__nav">
+              <button class="calendar__nav-btn" aria-label="Предыдущий месяц">&lt;</button>
+              <button class="calendar__nav-btn" aria-label="Следующий месяц">&gt;</button>
+            </div>
+          </div>
+
+          <div class="calendar__grid">
+            <div class="calendar__weekday">Пн</div>
+            <div class="calendar__weekday">Вт</div>
+            <div class="calendar__weekday">Ср</div>
+            <div class="calendar__weekday">Чт</div>
+            <div class="calendar__weekday">Пт</div>
+            <div class="calendar__weekday">Сб</div>
+            <div class="calendar__weekday">Вс</div>
+
+            <button class="calendar__day calendar__day_other-month">28</button>
+            <button class="calendar__day calendar__day_other-month">29</button>
+            <button class="calendar__day calendar__day_other-month">30</button>
+            <button class="calendar__day calendar__day_selected">1</button>
+            <button class="calendar__day">2</button>
+            <button class="calendar__day">3</button>
+            <button class="calendar__day">4</button>
+
+            <button class="calendar__day">5</button>
+            <button class="calendar__day">6</button>
+            <button class="calendar__day">7</button>
+            <button class="calendar__day">8</button>
+            <button class="calendar__day">9</button>
+            <button class="calendar__day">10</button>
+            <button class="calendar__day">11</button>
+
+            <button class="calendar__day">12</button>
+            <button class="calendar__day">13</button>
+            <button class="calendar__day">14</button>
+            <button class="calendar__day">15</button>
+            <button class="calendar__day">16</button>
+            <button class="calendar__day">17</button>
+            <button class="calendar__day">18</button>
+
+            <button class="calendar__day">19</button>
+            <button class="calendar__day">20</button>
+            <button class="calendar__day">21</button>
+            <button class="calendar__day">22</button>
+            <button class="calendar__day">23</button>
+            <button class="calendar__day">24</button>
+            <button class="calendar__day">25</button>
+
+            <button class="calendar__day">26</button>
+            <button class="calendar__day">27</button>
+            <button class="calendar__day">28</button>
+            <button class="calendar__day">29</button>
+            <button class="calendar__day">30</button>
+            <button class="calendar__day">31</button>
+            <button class="calendar__day calendar__day_other-month">1</button>
+          </div>
+        </div>
+
+        <div class="time-slots">
+          <h2 class="time-slots__title">Доступное время</h2>
+          <div class="time-slots__grid">
+            <button class="time-slots__slot time-slots__slot_busy">10:00</button>
+            <button class="time-slots__slot time-slots__slot_busy">11:00</button>
+            <button class="time-slots__slot time-slots__slot_busy">12:00</button>
+            <button class="time-slots__slot time-slots__slot_busy">13:00</button>
+
+            <button class="time-slots__slot time-slots__slot_selected">14:00</button>
+
+            <button class="time-slots__slot">15:00</button>
+            <button class="time-slots__slot">16:00</button>
+            <button class="time-slots__slot">18:00</button>
+            <button class="time-slots__slot">19:00</button>
+            <button class="time-slots__slot">20:00</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form__button">Далее</div>
+    </section>
+  </main>
+
+
+  <footer class="footer">
+    <div class="footer__top">
+      <div class="footer__column">
+        <span class="footer__logo">LUMIERE</span>
+        <p class="footer__slogan">Превзойдем твои ожидания создав уникальный образ</p>
+      </div>
+
+      <div class="footer__column">
+        <h3 class="footer__heading">КОНТАКТЫ</h3>
+        <address class="footer__address">
+          <div class="footer__contact-item">
+            <span class="footer__icon">📍</span>
+            <span>ул. Садовая, 15, Москва</span>
+          </div>
+          <div class="footer__contact-item">
+            <span class="footer__icon">📞</span>
+            <a href="tel:+78005553535" class="footer__link">+7 (800) 555-35-35</a>
+          </div>
+        </address>
+      </div>
+
+      <div class="footer__column">
+        <h3 class="footer__heading">РЕЖИМ РАБОТЫ</h3>
+        <ul class="footer__list">
+          <li class="footer__list-item">Пн-Пт: 9:00 - 21:00</li>
+          <li class="footer__list-item">Сб-Вс: 10:00 - 19:00</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p class="footer__copyright">© 2026. Все права защищены.</p>
+      <a href="#" class="footer__policy-link">Политика конфиденциальности</a>
+    </div>
+  </footer>
+</body>
+
 </html>
