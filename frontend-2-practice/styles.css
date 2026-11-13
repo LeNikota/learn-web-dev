@@ -427,7 +427,7 @@ button {
   font-weight: var(--font-weight-bold);
 }
 
-.time-slots__slot:hover:not(:disabled):not(.time-slots__slot_busy) {
+.time-slots__slot:hover:not(:disabled):not(.time-slots__slot_disabled) {
   opacity: 0.6;
 }
 
@@ -441,7 +441,7 @@ button {
   border-color: var(--color-800);
 }
 
-.time-slots__slot_busy {
+.time-slots__slot_disabled {
   background: transparent;
   border: 1px solid var(--text-tertiary);
   cursor: not-allowed;

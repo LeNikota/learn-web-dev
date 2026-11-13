@@ -248,11 +248,11 @@ function renderTimeSlots() {
 
     slots.forEach(slot => {
         const isSelected = state.selectedTime === slot.time;
-        const isBusy = !slot.available;
+        const isBusy = !slot.available || !state.selectedDay;
 
         let classes = ['time-slots__slot'];
         if (isSelected) classes.push('time-slots__slot_selected');
-        if (isBusy) classes.push('time-slots__slot_busy');
+        if (isBusy) classes.push('time-slots__slot_disabled');
 
         const isDisabled = isBusy;
 
