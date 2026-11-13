@@ -294,12 +294,9 @@ button {
 }
 
 .form-booking {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   gap: var(--spacing-4);
-  margin-bottom: var(--spacing-6);
 }
 
 /* Calender */
@@ -469,6 +466,26 @@ button {
 .form__button:hover {
   opacity: 0.6;
 }
+
+
+/* Booking summary */
+.form-booking__footer {
+  grid-column: span 2;
+  padding: var(--spacing-2);
+  background-color: var(--surface-primary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.form__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 
 /* Footer */
 .footer {

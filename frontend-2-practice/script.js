@@ -172,6 +172,7 @@ elements.gridContainer = document.querySelector('.calendar__grid');
 elements.prevBtn = document.querySelectorAll('.calendar__nav-btn')[0];
 elements.nextBtn = document.querySelectorAll('.calendar__nav-btn')[1];
 elements.slotsContainer = document.querySelector('.time-slots__grid');
+elements.summaryPanel = document.querySelector('.form-booking__summary');
 elements.nextStepBtn = document.querySelector('.form__button');
 
 function renderCalendarHeader() {
@@ -230,7 +231,7 @@ function attachDayClickHandlers(buttonElements) {
             state.currentYear = year;
             state.currentMonth = month;
             state.selectedDay = day;
-            validateSelectedTime(); 
+            validateSelectedTime();
 
             renderCalendarHeader();
             renderCalendarGrid();
@@ -241,8 +242,6 @@ function attachDayClickHandlers(buttonElements) {
 }
 
 function renderTimeSlots() {
-    if (!elements.slotsContainer) return;
-
     let html = '';
 
     slots = SLOTS_DATA[getCurrentDateAsString()] ? SLOTS_DATA[getCurrentDateAsString()] : DEFAULT_SLOTS;
@@ -278,15 +277,22 @@ function attachTimeSlotClickHandlers(buttonElements) {
 }
 
 function updateBottomBarVisuals() {
-    if (elements.nextStepBtn) {
-        if (state.selectedDay && state.selectedTime) {
-            elements.nextStepBtn.classList.remove('disabled');
-        } else {
-            elements.nextStepBtn.classList.add('disabled');
-        }
+    const hasSelection = state.selectedDay && state.selectedTime;
+
+    if (hasSelection) {
+        const formattedDate = printFormatSelectedDateTime();
+        elements.summaryPanel.textContent = formattedDate;
+        elements.summaryPanel.classList.add('active');
+    } else {
+        elements.summaryPanel.textContent = "Выберите дату и время";
+        elements.summaryPanel.classList.remove('active');
     }
 
-    console.log(printFormatSelectedDateTime());
+    if (hasSelection) {
+        elements.nextStepBtn.removeAttribute('disabled');
+    } else {
+        elements.nextStepBtn.setAttribute('disabled', 'true');
+    }
 }
 
 function setupMonthNavigation() {
@@ -327,6 +333,19 @@ function setupMonthNavigation() {
     }
 }
 
+function setupNextButtonHandler() {
+    elements.nextStepBtn.addEventListener('click', () => {
+        if (!state.selectedDay || !state.selectedTime) {
+            alert("Пожалуйста, выберите дату и время.");
+            return;
+        }
+
+        const finalMessage = printFormatSelectedDateTime();
+
+        alert(`Вы выбрали:\n${finalMessage}`);
+    });
+}
+
 
 
 
@@ -337,5 +356,6 @@ function init() {
     renderTimeSlots();
     updateBottomBarVisuals();
     setupMonthNavigation();
+    setupNextButtonHandler();
 }
 document.addEventListener('DOMContentLoaded', init);
