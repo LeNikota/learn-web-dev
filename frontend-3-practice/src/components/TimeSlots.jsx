@@ -1,23 +1,25 @@
-import { DEFAULT_SLOTS } from '../utils/dateHelpers';
+import { getSlotsForDate } from '../utils/dateHelpers';
 
-const TimeSlots = ({ selectedTime, onTimeClick }) => {
+const TimeSlots = ({ currentYear, currentMonth, selectedDay, selectedTime, onTimeClick }) => {
+  const slots = getSlotsForDate(currentYear, currentMonth, selectedDay)
+
   return (
     <div className="time-slots">
       <h3 className="time-slots__title">Доступное время</h3>
       <div className="time-slots__grid">
-        {DEFAULT_SLOTS.map((slot, index) => {
+        {slots.map((slot, index) => {
           const isSelected = selectedTime === slot.time;
-          const isBusy = !slot.available;
-          
+          const isDisabled = !slot.available || !selectedDay;
+
           const classes = ['time-slots__slot'];
           if (isSelected) classes.push('time-slots__slot_selected');
-          if (isBusy) classes.push('time-slots__slot_busy');
+          if (isDisabled) classes.push('time-slots__slot_disabled');
 
           return (
             <button
               key={index}
               className={classes.join(' ')}
-              disabled={isBusy}
+              disabled={isDisabled}
               onClick={() => onTimeClick(slot.time)}
             >
               {slot.time}

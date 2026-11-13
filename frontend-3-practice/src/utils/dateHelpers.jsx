@@ -12,11 +12,16 @@ const DAYS_OF_WEEK_FULL = [
   "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"
 ];
 
-export const DEFAULT_SLOTS = [
-  { time: "10:00", available: false },
-  { time: "11:00", available: false },
-  { time: "12:00", available: false },
-  { time: "13:00", available: false },
+const BASE_TIMES = [
+  "10:00", "11:00", "12:00", "13:00", "14:00",
+  "15:00", "16:00", "18:00", "19:00", "20:00"
+];
+
+const DEFAULT_SLOTS = [
+  { time: "10:00", available: true },
+  { time: "11:00", available: true },
+  { time: "12:00", available: true },
+  { time: "13:00", available: true },
   { time: "14:00", available: true },
   { time: "15:00", available: true },
   { time: "16:00", available: true },
@@ -24,6 +29,39 @@ export const DEFAULT_SLOTS = [
   { time: "19:00", available: true },
   { time: "20:00", available: true }
 ];
+
+const SLOTS_DATA = initSlotsData();
+
+function convertDateToString(date) {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+
+    const m = String(month + 1).padStart(2, '0');
+    const d = String(day).padStart(2, '0');
+    return `${year}-${m}-${d}`;
+}
+
+function initSlotsData() {
+  const stored = localStorage.getItem('slots_data');
+  if (stored)
+    return JSON.parse(stored);
+
+  const newData = {};
+  for (let i = 0; i < 7; i++) {
+    const current = new Date();
+    current.setDate(current.getDate() + i);
+    const dateString = convertDateToString(current);
+
+    newData[dateString] = BASE_TIMES.map(time => ({
+      time,
+      available: Math.random() > 0.5
+    }));
+  }
+
+  localStorage.setItem('slots_data', JSON.stringify(newData));
+  return newData;
+}
 
 export const TODAY = new Date();
 TODAY.setHours(0, 0, 0, 0);
@@ -80,9 +118,16 @@ export function isDateInPast(dateObj) {
 }
 
 export function formatSelectedDateTime(year, month, day, time) {
-  if (!day || !time) return "";
+  if (!day || !time) return "Выберите время";
   const dateObj = new Date(year, month, day);
   const dayName = DAYS_OF_WEEK_FULL[dateObj.getDay()];
   const monthGenitive = MONTHS_GENITIVE[month];
-  return `${dayName}, ${day} ${monthGenitive} ${year} • ${time}`;
+  return `${dayName}, ${day} ${monthGenitive} ${year}, ${time}`;
+}
+
+export function getSlotsForDate(year, month, day) {
+  const targetDate = new Date(year, month, day);
+  const dateString = convertDateToString(targetDate);
+
+  return SLOTS_DATA[dateString] ? SLOTS_DATA[dateString] : DEFAULT_SLOTS;
 }

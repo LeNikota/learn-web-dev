@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './index.css';
 import Header from './components/Header';
 import Stepper from './components/Stepper';
 import Calendar from './components/Calendar';
 import TimeSlots from './components/TimeSlots';
+import BookingSummary from './components/BookingSummary'
 import Footer from './components/Footer';
-import { TODAY, formatSelectedDateTime } from './utils/dateHelpers';
+import { TODAY, getSlotsForDate } from './utils/dateHelpers';
 
 function App() {
   // State
@@ -45,38 +46,37 @@ function App() {
   const handleDayClick = (dateObj) => {
     setSelectedDay(dateObj.getDate());
     if (dateObj.getMonth() !== currentMonth || dateObj.getFullYear() !== currentYear) {
-        setCurrentMonth(dateObj.getMonth());
-        setCurrentYear(dateObj.getFullYear());
+      setCurrentMonth(dateObj.getMonth());
+      setCurrentYear(dateObj.getFullYear());
     }
-    setSelectedTime(null);
+
+    if (selectedTime) {
+      const newSlots = getSlotsForDate(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+
+      const slotObject = newSlots.find(slot => slot.time === selectedTime);
+      if (!slotObject || !slotObject.available)
+        setSelectedTime(null);
+    }
   };
 
   const handleTimeClick = (time) => {
     setSelectedTime(time);
   };
 
-  // Derived state for form-action
-  // const BookingSummary = formatSelectedDateTime(
-  //   currentYear, 
-  //   currentMonth, 
-  //   selectedDay, 
-  //   selectedTime
-  // );
-
   return (
     <div className="App">
-      <Header/>
-      <Stepper/>
-      
+      <Header />
+      <Stepper />
+
       <main className="booking">
         <div className="form-header">
           <a href="#" className="form-header__back-link">← Назад</a>
           <h1 className="form-header__title">Дата и время</h1>
-          <p className="form-header__subtitle">Найдите удобное окошко в расписании мастера.</p>
+          <p className="form-header__subtitle">Найдите удобную дату и время в расписании мастера.</p>
         </div>
 
         <div className="form-booking">
-          <Calendar 
+          <Calendar
             currentYear={currentYear}
             currentMonth={currentMonth}
             selectedDay={selectedDay}
@@ -85,25 +85,24 @@ function App() {
             onDayClick={handleDayClick}
           />
 
-          <TimeSlots 
+          <TimeSlots
+            currentYear={currentYear}
+            currentMonth={currentMonth}
+            selectedDay={selectedDay}
             selectedTime={selectedTime}
             onTimeClick={handleTimeClick}
           />
-        </div>
 
-        <div className="form-actions">
-           {/* {BookingSummary} */}
-
-           <button 
-             className={`form__button ${!selectedDay || !selectedTime ? 'disabled' : ''}`}
-             disabled={!selectedDay || !selectedTime}
-           >
-             Далее
-           </button>
+          <BookingSummary
+            currentYear={currentYear}
+            currentMonth={currentMonth}
+            selectedDay={selectedDay}
+            selectedTime={selectedTime}
+          />
         </div>
       </main>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 }
