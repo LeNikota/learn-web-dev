@@ -15,10 +15,10 @@ const DAYS_OF_WEEK_FULL = [
 ];
 
 const DEFAULT_SLOTS = [
-    { time: "10:00", available: false },
-    { time: "11:00", available: false },
-    { time: "12:00", available: false },
-    { time: "13:00", available: false },
+    { time: "10:00", available: true },
+    { time: "11:00", available: true },
+    { time: "12:00", available: true },
+    { time: "13:00", available: true },
     { time: "14:00", available: true },
     { time: "15:00", available: true },
     { time: "16:00", available: true },
@@ -26,6 +26,9 @@ const DEFAULT_SLOTS = [
     { time: "19:00", available: true },
     { time: "20:00", available: true }
 ];
+
+const SLOTS_DATA = initSlotsData()
+
 
 
 
@@ -42,7 +45,7 @@ const state = {
 
 
 
-// 3. Pure function
+// 3. Pure functions
 function buildCalendarGrid(year, month) {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -104,7 +107,62 @@ function printFormatSelectedDateTime() {
     return `${dayName}, ${state.selectedDay} ${monthGenitive} ${state.currentYear} • ${state.selectedTime}`;
 }
 
+function convertDateToString(date) {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
 
+    const m = String(month + 1).padStart(2, '0');
+    const d = String(day).padStart(2, '0');
+    return `${year}-${m}-${d}`;
+}
+
+function getCurrentDateAsString() {
+    const m = String(state.currentMonth + 1).padStart(2, '0');
+    const d = String(state.selectedDay).padStart(2, '0');
+    return `${state.currentYear}-${m}-${d}`;
+}
+
+// Not pure, generates data using Math.random()
+function initSlotsData() {
+    const BASE_TIMES = [
+        "10:00", "11:00", "12:00", "13:00", "14:00",
+        "15:00", "16:00", "18:00", "19:00", "20:00"
+    ];
+
+    const storedSlotsData = localStorage.getItem("slots_data")
+
+    if (storedSlotsData)
+        return JSON.parse(storedSlotsData);
+
+    const slotsData = {};
+    for (let i = 0; i < 7; i++) {
+        const currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + i);
+        const currentDateString = convertDateToString(currentDate)
+
+        slotsData[currentDateString] = BASE_TIMES.map(time => ({ time, available: Math.random() > 0.5 }))
+    }
+
+    localStorage.setItem("slots_data", JSON.stringify(slotsData));
+
+    return slotsData;
+}
+
+// Not pure, access global state
+function validateSelectedTime() {
+    if (!state.selectedDay || !state.selectedTime) return;
+
+    const currentDateString = getCurrentDateAsString();
+
+    const slotsForCurrentDate = SLOTS_DATA[currentDateString] || DEFAULT_SLOTS;
+
+    const selectedSlot = slotsForCurrentDate.find(slot => slot.time === state.selectedTime);
+
+    if (!selectedSlot || !selectedSlot.available) {
+        state.selectedTime = null;
+    }
+}
 
 
 // 4. Rendering and handlers
@@ -162,9 +220,6 @@ function renderCalendarGrid() {
 }
 
 function attachDayClickHandlers(buttonElements) {
-    //!!! Delete this line when data is fetch from AP
-    DEFAULT_SLOTS.forEach(slot => slot.available = Math.random() > 0.5);
-
     buttonElements.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const target = e.currentTarget;
@@ -175,7 +230,7 @@ function attachDayClickHandlers(buttonElements) {
             state.currentYear = year;
             state.currentMonth = month;
             state.selectedDay = day;
-            state.selectedTime = null;
+            validateSelectedTime(); 
 
             renderCalendarHeader();
             renderCalendarGrid();
@@ -190,7 +245,9 @@ function renderTimeSlots() {
 
     let html = '';
 
-    DEFAULT_SLOTS.forEach(slot => {
+    slots = SLOTS_DATA[getCurrentDateAsString()] ? SLOTS_DATA[getCurrentDateAsString()] : DEFAULT_SLOTS;
+
+    slots.forEach(slot => {
         const isSelected = state.selectedTime === slot.time;
         const isBusy = !slot.available;
 
