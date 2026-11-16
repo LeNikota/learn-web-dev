@@ -33,33 +33,47 @@ const DEFAULT_SLOTS = [
 const SLOTS_DATA = initSlotsData();
 
 function convertDateToString(date) {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const day = date.getDate();
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
 
-    const m = String(month + 1).padStart(2, '0');
-    const d = String(day).padStart(2, '0');
-    return `${year}-${m}-${d}`;
+  const m = String(month + 1).padStart(2, '0');
+  const d = String(day).padStart(2, '0');
+  return `${year}-${m}-${d}`;
 }
 
 function initSlotsData() {
   const stored = localStorage.getItem('slots_data');
-  if (stored)
-    return JSON.parse(stored);
+  let newData = {};
 
-  const newData = {};
+  if (stored) {
+    try {
+      newData = JSON.parse(stored);
+    } catch (e) {
+      console.error("Failed to parse slots data", e);
+      newData = {};
+    }
+  }
+
+  let hasChanges = false;
   for (let i = 0; i < 7; i++) {
     const current = new Date();
     current.setDate(current.getDate() + i);
     const dateString = convertDateToString(current);
 
-    newData[dateString] = BASE_TIMES.map(time => ({
-      time,
-      available: Math.random() > 0.5
-    }));
+    if (!newData[dateString]) {
+      newData[dateString] = BASE_TIMES.map(time => ({
+        time,
+        available: Math.random() > 0.5
+      }));
+      hasChanges = true;
+    }
   }
 
-  localStorage.setItem('slots_data', JSON.stringify(newData));
+  if (hasChanges || !stored) {
+    localStorage.setItem('slots_data', JSON.stringify(newData));
+  }
+
   return newData;
 }
 
@@ -118,16 +132,45 @@ export function isDateInPast(dateObj) {
 }
 
 export function formatSelectedDateTime(year, month, day, time) {
-  if (!day || !time) return "Выберите время";
+  if (!day) return "Выберите дату и время";
+
   const dateObj = new Date(year, month, day);
   const dayName = DAYS_OF_WEEK_FULL[dateObj.getDay()];
   const monthGenitive = MONTHS_GENITIVE[month];
-  return `${dayName}, ${day} ${monthGenitive} ${year}, ${time}`;
+  const dateStr = `${dayName}, ${day} ${monthGenitive} ${year}`;
+
+  return time ? `${dateStr}, ${time}` : dateStr;
+}
+
+function filterPastSlots(slots, year, month, day) {
+  const targetDate = new Date(year, month, day);
+  const now = new Date();
+
+  if (targetDate.toDateString() !== now.toDateString()) {
+    return slots;
+  }
+
+  const currentHours = now.getHours();
+  const currentMinutes = now.getMinutes();
+
+  return slots.map(slot => {
+    const [slotHours, slotMinutes] = slot.time.split(':').map(Number);
+    const isPast = slotHours < currentHours ||
+      (slotHours === currentHours && slotMinutes <= currentMinutes);
+
+    return {
+      ...slot,
+      available: slot.available && !isPast
+    };
+  });
 }
 
 export function getSlotsForDate(year, month, day) {
+  if (!day) return [];
+
   const targetDate = new Date(year, month, day);
   const dateString = convertDateToString(targetDate);
+  const rawSlots = SLOTS_DATA[dateString] || DEFAULT_SLOTS;
 
-  return SLOTS_DATA[dateString] ? SLOTS_DATA[dateString] : DEFAULT_SLOTS;
+  return filterPastSlots(rawSlots, year, month, day);
 }

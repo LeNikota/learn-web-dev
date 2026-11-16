@@ -45,18 +45,13 @@ function App() {
 
   const handleDayClick = (dateObj) => {
     setSelectedDay(dateObj.getDate());
+
     if (dateObj.getMonth() !== currentMonth || dateObj.getFullYear() !== currentYear) {
       setCurrentMonth(dateObj.getMonth());
       setCurrentYear(dateObj.getFullYear());
     }
 
-    if (selectedTime) {
-      const newSlots = getSlotsForDate(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
-
-      const slotObject = newSlots.find(slot => slot.time === selectedTime);
-      if (!slotObject || !slotObject.available)
-        setSelectedTime(null);
-    }
+    setSelectedTime(null);
   };
 
   const handleTimeClick = (time) => {
